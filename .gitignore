@@ -13,3 +13,28 @@
 .externalNativeBuild
 .cxx
 local.properties
+
+# Firebase/Google Services (contains sensitive config)
+google-services.json
+
+# Android Studio
+*.apk
+*.ap_
+*.aab
+*.dex
+*.class
+*.jar
+*.war
+*.ear
+
+# Gradle
+gradle-app.setting
+!gradle/wrapper/gradle-wrapper.jar
+
+# Logs
+*.log
+*.prof
+
+# OS
+Thumbs.db
+ehthumbs.db
