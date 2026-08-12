@@ -1,0 +1,21 @@
+<resources>
+    <string name="app_name">ScriptureSearch</string>
+    <string name="about_text"><![CDATA[ My new Scripture search app is a powerful tool that will help you explore the Bible in depth and find the verses you need. Whether you want to study a specific topic, this app has it all.
+
+With my app, you can:
+
+- Search for any keyword or reference
+- Share verses with friends via social media, email, or text
+- Access thousands of reading plans and devotionals to grow in your faith
+
+My app is easy to use!
+
+My app is based on bible-api.com, one of the most popular online Bible tools. It also integrates with other apps like YouVersion and Bible Search! for more features and options.
+
+My app is designed to help you seek and find God&apos;s Word in a new way. Download it today and discover how it can transform your personal Bible study.
+
+
+        My site uses bible-api.com to provide a JSON API for grabbing bible verses and passages. You can lookup scripture by using this format: BOOK+CHAPTER:VERSE. You can also specify different translations, verse numbers, and ranges using query parameters. For more details, please visit bible-api.com or check out their GitHub repository.
+
+: https://github.com/seven1m/bible_api ]]> </string>
+</resources>
