@@ -18,7 +18,6 @@ public class MainMenu extends AppCompatActivity {
     private FirebaseAnalytics mFirebaseAnalytics;
 
     private AdView mAdView;
-    private AdView mAdView2;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -28,10 +27,8 @@ public class MainMenu extends AppCompatActivity {
         mFirebaseAnalytics = FirebaseAnalytics.getInstance(this);
 
         mAdView = findViewById(R.id.adView);
-        mAdView2 = findViewById(R.id.adView2);
         AdRequest adRequest = new AdRequest.Builder().build();
         mAdView.loadAd(adRequest);
-        mAdView2.loadAd(adRequest);
 
         Button scriptureSearchButton = findViewById(R.id.button_scripture_search);
         scriptureSearchButton.setOnClickListener(new View.OnClickListener() {
