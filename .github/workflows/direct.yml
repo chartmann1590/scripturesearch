@@ -22,24 +22,37 @@ jobs:
         distribution: temurin
         java-version: '17'
     - uses: gradle/actions/setup-gradle@v4
-    - name: google-services.json (secret) and a CI-only signing key
+    - name: google-services.json (secret) and the signing key
       env:
         GSJ: ${{ secrets.GOOGLE_SERVICES_JSON }}
+        KS_B64: ${{ secrets.KEYSTORE_BASE64 }}
+        KS_PW: ${{ secrets.KEYSTORE_PASSWORD }}
+        KS_ALIAS: ${{ secrets.KEY_ALIAS }}
+        KS_KPW: ${{ secrets.KEY_PASSWORD }}
       run: |
         if [ -n "$GSJ" ]; then
           if printf '%s' "$GSJ" | head -c 1 | grep -q '{'; then printf '%s' "$GSJ" > app/google-services.json; else printf '%s' "$GSJ" | base64 -d > app/google-services.json; fi
         else
           echo '{"project_info":{"project_number":"000000000000","project_id":"ci-placeholder","storage_bucket":"ci-placeholder.appspot.com"},"client":[{"client_info":{"mobilesdk_app_id":"1:000000000000:android:0000000000000000","android_client_info":{"package_name":"com.charles.bible"}},"oauth_client":[],"api_key":[{"current_key":"ci-placeholder"}],"services":{"appinvite_service":{"other_platform_oauth_client":[]}}}],"configuration_version":"1"}' > app/google-services.json
         fi
-        # No release keystore secret exists in this repo: sign the test build with a throwaway CI key
-        # (NOT the Play signing key: a public direct release needs the real release keystore added as a secret).
-        keytool -genkeypair -storetype PKCS12 -keystore "$RUNNER_TEMP/ci.p12" -alias ci -keyalg RSA -keysize 2048 -validity 10000 -storepass cipass1234 -keypass cipass1234 -dname "CN=CI test key" >/dev/null
-        echo "RELEASE_STORE_FILE=$RUNNER_TEMP/ci.p12" >> $GITHUB_ENV
+        # Release keystore: the repo secrets KEYSTORE_BASE64 / KEYSTORE_PASSWORD / KEY_ALIAS / KEY_PASSWORD when set
+        # (the real release key); without them the test build is signed with a throwaway CI key, which is NOT for a public release.
+        if [ -n "$KS_B64" ]; then
+          echo "$KS_B64" | base64 -d > "$RUNNER_TEMP/release.p12"
+          echo "RELEASE_STORE_FILE=$RUNNER_TEMP/release.p12" >> $GITHUB_ENV
+          echo "RELEASE_STORE_PASSWORD=$KS_PW" >> $GITHUB_ENV
+          echo "RELEASE_KEY_ALIAS=$KS_ALIAS" >> $GITHUB_ENV
+          echo "RELEASE_KEY_PASSWORD=$KS_KPW" >> $GITHUB_ENV
+          echo "signing: release keystore secret"
+        else
+          keytool -genkeypair -storetype PKCS12 -keystore "$RUNNER_TEMP/ci.p12" -alias ci -keyalg RSA -keysize 2048 -validity 10000 -storepass cipass1234 -keypass cipass1234 -dname "CN=CI test key" >/dev/null
+          echo "RELEASE_STORE_FILE=$RUNNER_TEMP/ci.p12" >> $GITHUB_ENV
+          echo "RELEASE_STORE_PASSWORD=cipass1234" >> $GITHUB_ENV
+          echo "RELEASE_KEY_ALIAS=ci" >> $GITHUB_ENV
+          echo "RELEASE_KEY_PASSWORD=cipass1234" >> $GITHUB_ENV
+          echo "signing: THROWAWAY CI key (no KEYSTORE_BASE64 secret) - not for public release"
+        fi
     - name: Build direct APK (store=direct)
-      env:
-        RELEASE_STORE_PASSWORD: cipass1234
-        RELEASE_KEY_ALIAS: ci
-        RELEASE_KEY_PASSWORD: cipass1234
       run: |
         set -o pipefail
         chmod +x gradlew; ./gradlew --stacktrace --no-daemon :app:assembleRelease -Pstore=direct 2>&1 | tee -a /tmp/dsk-build.log
