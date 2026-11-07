@@ -6,14 +6,11 @@ tap (?i)^scripture search$
 wait 4
 adclose
 shot 02-search
-tap (?i)try john 3:16
-type John%s3:16
-wait 1
 tap (?i)^submit$
-wait 8
+wait 10
 adclose
-back
 wait 2
+adclose
 shot 03-verse-result
 tap (?i)^copy verse$
 wait 2
@@ -23,8 +20,7 @@ wait 3
 adclose
 shot 05-back-menu
 tap (?i)^about$
-wait 4
-adclose
+wait 5
 shot 06-about
 swipeup
 shot 07-about-bottom
