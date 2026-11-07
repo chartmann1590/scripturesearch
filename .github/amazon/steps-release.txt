@@ -1,0 +1,32 @@
+launch
+wait 12
+adclose
+shot 01-launch-main-menu
+tap (?i)^scripture search$
+wait 4
+adclose
+shot 02-search
+tap (?i)try john 3:16
+type John%s3:16
+wait 1
+tap (?i)^submit$
+wait 8
+adclose
+shot 03-verse-result
+tap (?i)^copy verse$
+wait 2
+shot 04-copied
+tap (?i)^close$
+wait 3
+adclose
+shot 05-back-menu
+tap (?i)^about$
+wait 4
+adclose
+shot 06-about
+swipeup
+shot 07-about-bottom
+tap (?i)^close$
+wait 3
+adclose
+shot 08-menu-again
