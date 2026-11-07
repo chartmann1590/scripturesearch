@@ -83,7 +83,7 @@ public class MainActivity extends AppCompatActivity {
 
     private String getVerse(String verse) {
         try {
-            URL url = new URL("https://bible-api.com/" + verse);
+            URL url = new URL("https://bible-api.com/" + verse.trim().replace(" ", "%20"));
             HttpURLConnection connection = (HttpURLConnection) url.openConnection();
             connection.setRequestMethod("GET");
             BufferedReader reader = new BufferedReader(new InputStreamReader(connection.getInputStream()));
@@ -123,6 +123,11 @@ public class MainActivity extends AppCompatActivity {
                     @Override
                     public void run() {
 
+                        // No answer from the verse service (offline, timeout, HTTP error): say so instead of crashing.
+                        if (response == null) {
+                            Toast.makeText(getApplicationContext(), "Couldn't reach the verse service. Check your connection and try again.", Toast.LENGTH_LONG).show();
+                            return;
+                        }
                         // Convert String to json object
                         JSONObject json = null;
                         try {
@@ -130,6 +135,7 @@ public class MainActivity extends AppCompatActivity {
                         } catch (JSONException e) {
                             e.printStackTrace();
                             Toast.makeText(getApplicationContext(), e.getMessage(), Toast.LENGTH_SHORT).show();
+                            return;
                         }
 
                         // get LL json object
