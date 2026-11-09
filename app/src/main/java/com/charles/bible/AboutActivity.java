@@ -24,6 +24,11 @@ public class AboutActivity extends AppCompatActivity {
 
         mFirebaseAnalytics = FirebaseAnalytics.getInstance(this);
 
+        // Amazon Appstore build: no outside-payment (donation) link (Amazon monetization policy)
+        if ("amazon".equals(BuildConfig.STORE)) {
+            View dev = findViewById(R.id.button_about_dev);
+            if (dev != null) dev.setVisibility(View.GONE);
+        }
         mAdView = findViewById(R.id.adView);
         AdRequest adRequest = new AdRequest.Builder().build();
         mAdView.loadAd(adRequest);
